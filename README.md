@@ -34,7 +34,7 @@ docker compose build
 docker compose up
 ```
 
-The application will be available at the configured port (default: 3000).
+The application will be available at the configured port (default: 5000).
 
 ## Development
 
