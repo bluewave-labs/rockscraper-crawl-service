@@ -1,7 +1,7 @@
 from crawl4ai.extraction_strategy import LLMExtractionStrategy
 from crawl4ai_custom.crawl4ai_config.low_level.llm_config import get_llm_config
 
-def get_extraction_strategy():
+def get_extraction_strategy(schema: dict = None, prompt: str = None):
     schema = {
         'product_name': 'product_name',
         'price': 'price'

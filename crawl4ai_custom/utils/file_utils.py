@@ -35,6 +35,11 @@ def save_markdowns(markdowns: List[str], base_dir: str = "markdowns") -> List[st
     
     saved_files = []
     for i, markdown in enumerate(markdowns, 1):
+        # Skip None values
+        if markdown is None:
+            print(f"Skipping None markdown at index {i}")
+            continue
+            
         filename = f"markdown_{i}.md"
         file_path = os.path.join(base_dir, filename)
         

@@ -7,6 +7,6 @@ api_token = os.getenv("API_TOKEN")
 
 def get_llm_config():
     return LLMConfig(
-        provider="openai/gpt-4o-mini",
+        provider="openai/gpt-4",
         api_token=api_token
     )

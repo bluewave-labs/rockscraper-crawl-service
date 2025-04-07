@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from app import db
 
 class Crawls(db.Model):
@@ -16,12 +17,16 @@ class Crawls(db.Model):
         return f'<Crawl {self.id}: {self.url}>'
 
     def to_dict(self):
+        # Parse JSON strings back to dictionaries if they exist
+        markdown_data = json.loads(self.markdown) if self.markdown else None
+        extracted_content_data = json.loads(self.extracted_content) if self.extracted_content else None
+        
         return {
             'id': self.id,
             'user_id': self.user_id,
             'url': self.url,
-            'markdown': self.markdown,
-            'extracted_content': self.extracted_content,
+            'markdown': markdown_data,
+            'extracted_content': extracted_content_data,
             'html': self.html,
             'date': self.date.isoformat() if self.date else None
         } 

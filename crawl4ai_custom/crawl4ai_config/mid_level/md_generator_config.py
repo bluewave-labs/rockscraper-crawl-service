@@ -1,23 +1,10 @@
 from crawl4ai import DefaultMarkdownGenerator, PruningContentFilter, LLMContentFilter
 from crawl4ai_custom.crawl4ai_config.low_level.llm_config import get_llm_config
 
-def get_llm_filter():
+def get_llm_filter(filter_prompt:str = None):
     return LLMContentFilter(
         llm_config=get_llm_config(),
-        instruction="""
-    Create a brief markdown file. Only include important details.
-    Include:
-    - Important headers
-    - Posted date
-    - Source
-    Exclude:
-    - Navigation elements
-    - Sidebars
-    - Footer content
-    - Menu elements like login/signup
-    - Comments
-    - Points
-    """,
+        instruction=filter_prompt,
         chunk_token_threshold=500,  # Adjust based on your needs
         verbose=True,
         # max_workers=15
@@ -40,9 +27,9 @@ def get_pruning_md_generator():
         }
     )
 
-def get_llm_md_generator():
+def get_llm_md_generator(filter_prompt:str = None):
     return DefaultMarkdownGenerator(
-        content_filter=get_llm_filter(),
+        content_filter=get_llm_filter(filter_prompt=filter_prompt),
         options={
             "ignore_images": True,
             "ignore_links": True,
