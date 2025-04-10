@@ -19,6 +19,9 @@ def validate_crawl_data(data):
     if 'max_pages' in data and not isinstance(data.get('max_pages'), int):
         return bad_request("max_pages must be an integer")
 
+    if 'max_depth' in data and not isinstance(data.get('max_depth'), int):
+        return bad_request("max_depth must be an integer")
+
     if 'extraction_schema' in data and not isinstance(data.get('extraction_schema'), dict):
         return bad_request("extraction_schema must be a dictionary")
 
@@ -49,6 +52,7 @@ def crawl_website_controller():
     url = data['url']
     user_id = data['user_id']
     max_pages = data.get('max_pages')
+    max_depth = data.get('max_depth', 1)  # Default to 1 if not provided
     extraction_schema = data.get('extraction_schema')
     extraction_prompt = data.get('extraction_prompt')
     markdown_filter_prompt = data.get('markdown_filter_prompt')
@@ -60,6 +64,7 @@ def crawl_website_controller():
             url=url,
             user_id=user_id,
             max_pages=max_pages,
+            max_depth=max_depth,
             extraction_schema=extraction_schema,
             extraction_prompt=extraction_prompt,
             markdown_filter_prompt=markdown_filter_prompt

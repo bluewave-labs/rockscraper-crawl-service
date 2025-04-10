@@ -1,22 +1,16 @@
-# Electronics on eBay ## Video Game Stick Retro Gaming Console w/ 2 Wireless
-Controller - Brand: Unbranded - Price: $33.99 - Shipping: Free ## New Classic
-Edition NES Mini Game Console w 30 games CA Free Shipping NEW - Brand: Unbranded
-- Price: $76.00 - Shipping: Free ## R36s Retro Handheld Video Game Console Linux
-System 3.5 Inch Screen 21000 Games - Condition: Pre-Owned - Brand: Unbranded -
-Price: $55.00 - Shipping: $13.20 ## PlayStation 4 with Two Controllers. All
-Cords + HDMI - Condition: Pre-Owned - Brand: Sony - Price: $100.00 - Shipping:
-$12.04 ## More to explore - [Alesis DM10 Electronic Percussion
-Drums](https://www.ebay.com/b/Alesis-DM10-Electronic-Percussion-
-Drums/38069/bn_7023317487) - [Casio SK 1 Electronic
-Keyboards](https://www.ebay.com/b/Casio-SK-1-Electronic-
-Keyboards/38088/bn_7023290661) - [Electronic
-Bagpipes](https://www.ebay.com/b/Electronic-Bagpipes/16226/bn_7023275739) -
-[Korg Wavedrum Percussion Electronic Drums](https://www.ebay.com/b/Korg-
-Wavedrum-Percussion-Electronic-Drums/38069/bn_7023333324) - [Roland Octapad
-Percussion Electronic Drums](https://www.ebay.com/b/Roland-Octapad-Percussion-
-Electronic-Drums/38069/bn_7023346222) - [Roland V Percussion Electronic
-Drums](https://www.ebay.com/b/Roland-V-Percussion-Electronic-
-Drums/38069/bn_7023305733) - [Weighted Electronic
-Keyboards](https://www.ebay.com/b/Weighted-Electronic-
-Keyboards/38088/bn_7023252519)
+# Console, Retro Handheld Game /Built in 15000+ Games HO N3R1 - Brand: Unbranded
+- Price: $37.07 to $42.08 - Free shipping # Microsoft Xbox One S, 1681, 500GB,
+White, Console - Brand: Microsoft - Price: $119.99 - Free shipping # PlayStation
+2 PS2 Console Slim USA Shipping MINT condition BUNDLE! + Accessories - Brand:
+Sony - Price: $169.95 - Free shipping # Miyoo Mini Plus + Open Source Handheld
+Game Console with 64GB - US Seller - Price: $49.00 - Free shipping # Authentic
+Nintendo Classic Edition NES Mini HDMI Console Fu Library Games 1000+ - Brand:
+Nintendo - Price: $139.69 - Free shipping # BLACK Sony PSP 1000 System w/
+Charger & 64gb Memory Card Bundle TESTED Import - Brand: Sony - Price: $97.00 -
+Free shipping # Retro Game Mini Game Anniversary Edition Entertainment System
+621 Games HDMI Out - Brand: Unbranded - Price: $18.99 - Free shipping # 1x
+Battery Cover Back Door Lid Replace For Nintendo Gameboy Advance GBA Console* -
+Brand: Unbranded - Price: $2.69 - Free shipping # New Anbernic RG35XX SP Flip
+Linux Handheld Game Console Support Wired Controller - Price: $66.59 - Free
+shipping
 

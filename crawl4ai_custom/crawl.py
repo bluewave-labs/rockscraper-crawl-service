@@ -33,7 +33,6 @@ async def crawl(url: str, max_pages: int = None):
         if result.success:
             # Get file path using utility function with the correct base directory
             file_path = get_file_path_for_url(result.url, base_dir=FIT_HTML_DIR)
-            
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(result.markdown.fit_html)
             print(f"Saved HTML to {file_path}")
@@ -123,6 +122,7 @@ def process_markdowns(markdowns=None, schema: dict = None, prompt: str = None):
                 print(f"Extracted {len(extracted_content)} blocks from markdown {i}")
                 i+=1
             else:
+                print("None markdown")
                 contents.append(None)
     print(contents)
     return contents
