@@ -7,7 +7,7 @@ from app.models.crawl_model import Crawls
 from crawl4ai_custom.crawl import crawl, create_markdowns, process_markdowns
 
 class CrawlService:
-    async def _perform_crawl(self, url: str, max_pages=None, max_depth=1, extraction_schema=None, extraction_prompt=None, markdown_filter_prompt=None, ignore_images=True, ignore_links=True):
+    async def _perform_crawl(self, url: str, max_pages=None, max_depth=1, extraction_schema=None, extraction_prompt=None, markdown_filter_prompt=None, ignore_images=True, ignore_links=True, is_llm_markdown=False):
         """
         Perform the actual crawling using crawl4ai_custom
         
@@ -20,6 +20,7 @@ class CrawlService:
             markdown_filter_prompt (str, optional): Prompt for filtering markdown content
             ignore_images (bool, optional): Whether to ignore images in markdown. Defaults to True.
             ignore_links (bool, optional): Whether to ignore links in markdown. Defaults to True.
+            is_llm_markdown (bool, optional): Whether to skip LLM markdown processing. Defaults to False.
             
         Returns:
             tuple: (markdown, html, extracted_content)
@@ -27,7 +28,7 @@ class CrawlService:
         # Run the crawl
         saved_files, urls = await crawl(url, max_pages=max_pages, max_depth=max_depth, ignore_images=ignore_images, ignore_links=ignore_links)
         # Process the HTML files into markdowns
-        markdowns = await create_markdowns(saved_files, filter_prompt=markdown_filter_prompt, ignore_images=ignore_images, ignore_links=ignore_links)
+        markdowns = saved_files if not is_llm_markdown else await create_markdowns(saved_files, filter_prompt=markdown_filter_prompt, ignore_images=ignore_images, ignore_links=ignore_links)
         # Process markdowns to extract content
         extracted_contents = None
         if extraction_schema or extraction_prompt:
@@ -46,7 +47,7 @@ class CrawlService:
             urls
         )
 
-    def crawl_website(self, url, user_id, max_pages=None, max_depth=1, extraction_schema=None, extraction_prompt=None, markdown_filter_prompt=None, ignore_images=True, ignore_links=True):
+    def crawl_website(self, url, user_id, max_pages=None, max_depth=1, extraction_schema=None, extraction_prompt=None, markdown_filter_prompt=None, ignore_images=True, ignore_links=True, is_llm_markdown=False):
         """
         Crawl a website and store the results
         
@@ -60,6 +61,7 @@ class CrawlService:
             markdown_filter_prompt (str, optional): Prompt for filtering markdown content
             ignore_images (bool, optional): Whether to ignore images in markdown. Defaults to True.
             ignore_links (bool, optional): Whether to ignore links in markdown. Defaults to True.
+            is_llm_markdown (bool, optional): Whether to skip LLM markdown processing. Defaults to False.
             
         Returns:
             Crawls: The created crawl record
@@ -74,7 +76,8 @@ class CrawlService:
                 extraction_prompt=extraction_prompt,
                 markdown_filter_prompt=markdown_filter_prompt,
                 ignore_images=ignore_images,
-                ignore_links=ignore_links
+                ignore_links=ignore_links,
+                is_llm_markdown=is_llm_markdown
             ))
 
             assert(len(markdown) == len(html))

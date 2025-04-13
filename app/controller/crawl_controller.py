@@ -28,6 +28,9 @@ def validate_crawl_data(data):
     if 'ignore_links' in data and not isinstance(data.get('ignore_links'), bool):
         return bad_request("ignore_links must be a boolean")
 
+    if 'is_llm_markdown' in data and not isinstance(data.get('is_llm_markdown'), bool):
+        return bad_request("is_llm_markdown must be a boolean")
+
     if 'extraction_schema' in data and not isinstance(data.get('extraction_schema'), dict):
         return bad_request("extraction_schema must be a dictionary")
 
@@ -61,6 +64,7 @@ def crawl_website_controller():
     max_depth = data.get('max_depth', 1)  # Default to 1 if not provided
     ignore_images = data.get('ignore_images', True)  # Default to True if not provided
     ignore_links = data.get('ignore_links', True)  # Default to True if not provided
+    is_llm_markdown = data.get('is_llm_markdown', False)  # Default to False if not provided
     extraction_schema = data.get('extraction_schema')
     extraction_prompt = data.get('extraction_prompt')
     markdown_filter_prompt = data.get('markdown_filter_prompt')
@@ -77,7 +81,8 @@ def crawl_website_controller():
             extraction_prompt=extraction_prompt,
             markdown_filter_prompt=markdown_filter_prompt,
             ignore_images=ignore_images,
-            ignore_links=ignore_links
+            ignore_links=ignore_links,
+            is_llm_markdown=is_llm_markdown
         )
 
         # Step 3: Return the response
