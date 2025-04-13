@@ -1,5 +1,6 @@
 import asyncio
 import os
+import re
 from crawl4ai import AsyncWebCrawler
 from .crawl4ai_config.high_level.browser_config import get_browser_config
 from .crawl4ai_config.high_level.crawl_config import get_crawl_config, get_html_file_crawl_config
@@ -8,17 +9,16 @@ from .crawl4ai_config.mid_level.extraction_config import get_extraction_strategy
 from .utils.url_utils import get_file_path_for_url
 from .utils.file_utils import ensure_directory_exists, get_file_urls, print_file_list, save_markdowns, read_markdowns_from_folder
 
-
 # Define base directories for storing files
 FIT_HTML_DIR = os.path.join(os.path.dirname(__file__), "fit_html")
 MARKDOWNS_DIR = os.path.join(os.path.dirname(__file__), "markdowns")
 
 
-async def crawl(url: str, max_pages: int = None):
+async def crawl(url: str, max_pages: int = None, max_depth: int = 1, ignore_images: bool = True, ignore_links: bool = True):
     # PHASE 1: Crawl pages quickly without LLM processing
     browser_conf = get_browser_config()
     crawler = await AsyncWebCrawler(config=browser_conf).start()
-    crawl_config = get_crawl_config(max_pages=max_pages)
+    crawl_config = get_crawl_config(max_pages=max_pages, max_depth=max_depth, ignore_images=ignore_images, ignore_links=ignore_links)
 
     # Execute the crawl and collect all results
     results = []
@@ -53,7 +53,7 @@ async def crawl(url: str, max_pages: int = None):
     # await create_markdowns(saved_files)
 
 
-async def create_markdowns(saved_files: list[str], filter_prompt: str = None):
+async def create_markdowns(saved_files: list[str], filter_prompt: str = None, ignore_images: bool = True, ignore_links: bool = True):
     """Process local HTML files using the crawler."""
     if not saved_files:
         print("No HTML files to process.")
@@ -64,7 +64,7 @@ async def create_markdowns(saved_files: list[str], filter_prompt: str = None):
     print_file_list(urls, "Processing HTML files:")
 
     # Create markdowns
-    html_crawl_config = get_html_file_crawl_config(filter_prompt=filter_prompt)
+    html_crawl_config = get_html_file_crawl_config(filter_prompt=filter_prompt, ignore_images=ignore_images, ignore_links=ignore_links)
     markdowns = []
     successful_md_number = 0
     dispatcher = get_memory_adaptive_dispatcher()
@@ -76,7 +76,7 @@ async def create_markdowns(saved_files: list[str], filter_prompt: str = None):
                 print(f"Successfully processed: {result.url}")
                 print("Markdown Content:")
                 print(result.markdown.fit_markdown)
-                successful_md_number+=1
+                successful_md_number += 1
             else:
                 markdowns.append(None)
                 print(f"Didn't process irrelevant page: {result.url}")
@@ -99,12 +99,6 @@ def process_markdowns(markdowns=None, schema: dict = None, prompt: str = None):
         schema: Dictionary defining the schema for content extraction
         prompt: Text prompt for content extraction
     """
-    # If markdowns is None, read from the markdowns folder
-    # if markdowns is None:
-    #     print("No markdowns provided, reading from markdowns folder...")
-    #     markdowns = read_markdowns_from_folder(base_dir=MARKDOWNS_DIR)
-    #     print(f"Read {len(markdowns)} markdowns from folder")
-    
     contents = []
 
     # Process each page with LLM extraction

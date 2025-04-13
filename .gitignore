@@ -18,3 +18,5 @@ build/
 
 logs
 /venv2/
+
+crawl4ai_custom/fit_html

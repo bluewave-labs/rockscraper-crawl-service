@@ -22,6 +22,12 @@ def validate_crawl_data(data):
     if 'max_depth' in data and not isinstance(data.get('max_depth'), int):
         return bad_request("max_depth must be an integer")
 
+    if 'ignore_images' in data and not isinstance(data.get('ignore_images'), bool):
+        return bad_request("ignore_images must be a boolean")
+
+    if 'ignore_links' in data and not isinstance(data.get('ignore_links'), bool):
+        return bad_request("ignore_links must be a boolean")
+
     if 'extraction_schema' in data and not isinstance(data.get('extraction_schema'), dict):
         return bad_request("extraction_schema must be a dictionary")
 
@@ -53,6 +59,8 @@ def crawl_website_controller():
     user_id = data['user_id']
     max_pages = data.get('max_pages')
     max_depth = data.get('max_depth', 1)  # Default to 1 if not provided
+    ignore_images = data.get('ignore_images', True)  # Default to True if not provided
+    ignore_links = data.get('ignore_links', True)  # Default to True if not provided
     extraction_schema = data.get('extraction_schema')
     extraction_prompt = data.get('extraction_prompt')
     markdown_filter_prompt = data.get('markdown_filter_prompt')
@@ -67,7 +75,9 @@ def crawl_website_controller():
             max_depth=max_depth,
             extraction_schema=extraction_schema,
             extraction_prompt=extraction_prompt,
-            markdown_filter_prompt=markdown_filter_prompt
+            markdown_filter_prompt=markdown_filter_prompt,
+            ignore_images=ignore_images,
+            ignore_links=ignore_links
         )
 
         # Step 3: Return the response
