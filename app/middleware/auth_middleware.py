@@ -7,6 +7,7 @@ import logging
 from datetime import datetime, UTC
 
 logger = logging.getLogger(__name__)
+# CRAWLER_NAME = 'CRAWLER'
 
 def verify_jwt(f):
     @wraps(f)
@@ -23,17 +24,17 @@ def verify_jwt(f):
             logger.debug(f"JWT Claims: {claims}")
             
             # Get roles for Uptime
-            roles = [
-                role['role_name'] 
-                for role in claims.get('roles', []) 
-                if role.get('team_name') == 'UPTIME'
-            ]
+            # roles = [
+            #     role['role_name']
+            #     for role in claims.get('roles', [])
+            #     if role.get('team_name') == CRAWLER_NAME
+            # ]
             
             # Add user data to request context
-            request.user = {
-                **claims,
-                'roles': roles
-            }
+            # request.user = {
+            #     **claims,
+            #     'roles': roles
+            # }
             
             # Add user_id to kwargs
             kwargs['user_id'] = user_id
