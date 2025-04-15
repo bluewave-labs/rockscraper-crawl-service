@@ -18,6 +18,7 @@ The following environment variables are used in the application:
 - `DATABASE_URL`: Complete PostgreSQL connection URL
 
 ### API Configuration
+
 - `API_TOKEN`: Authentication token for LLM API access
 
 ## Getting Started

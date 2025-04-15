@@ -18,3 +18,7 @@ build/
 
 logs
 /venv2/
+
+crawl4ai_custom/fit_html/
+crawl4ai_custom/non-llm-markdown/
+crawl4ai_custom/markdowns/

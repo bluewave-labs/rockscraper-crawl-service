@@ -13,11 +13,20 @@ def validate_crawl_data(data):
     if not isinstance(data.get('url'), str):
         return bad_request("URL must be a string")
 
-    if not isinstance(data.get('user_id'), int):
-        return bad_request("User ID must be an integer")
-
     if 'max_pages' in data and not isinstance(data.get('max_pages'), int):
         return bad_request("max_pages must be an integer")
+
+    if 'max_depth' in data and not isinstance(data.get('max_depth'), int):
+        return bad_request("max_depth must be an integer")
+
+    if 'ignore_images' in data and not isinstance(data.get('ignore_images'), bool):
+        return bad_request("ignore_images must be a boolean")
+
+    if 'ignore_links' in data and not isinstance(data.get('ignore_links'), bool):
+        return bad_request("ignore_links must be a boolean")
+
+    if 'is_llm_markdown' in data and not isinstance(data.get('is_llm_markdown'), bool):
+        return bad_request("is_llm_markdown must be a boolean")
 
     if 'extraction_schema' in data and not isinstance(data.get('extraction_schema'), dict):
         return bad_request("extraction_schema must be a dictionary")
@@ -29,14 +38,14 @@ def validate_crawl_data(data):
         return bad_request("markdown_filter_prompt must be a string")
 
     # Null checks
-    required_fields = ['url', 'user_id']
+    required_fields = ['url']
     for field in required_fields:
         if not data.get(field):
             return bad_request(f"{field.capitalize()} is required")
 
     return True
 
-def crawl_website_controller():
+def crawl_website_controller(user_id):
     """
     Controller to process website URL and crawl its content.
     """
@@ -47,8 +56,11 @@ def crawl_website_controller():
         return validation_response
 
     url = data['url']
-    user_id = data['user_id']
     max_pages = data.get('max_pages')
+    max_depth = data.get('max_depth', 1)  # Default to 1 if not provided
+    ignore_images = data.get('ignore_images', True)  # Default to True if not provided
+    ignore_links = data.get('ignore_links', True)  # Default to True if not provided
+    is_llm_markdown = data.get('is_llm_markdown', False)  # Default to False if not provided
     extraction_schema = data.get('extraction_schema')
     extraction_prompt = data.get('extraction_prompt')
     markdown_filter_prompt = data.get('markdown_filter_prompt')
@@ -60,9 +72,13 @@ def crawl_website_controller():
             url=url,
             user_id=user_id,
             max_pages=max_pages,
+            max_depth=max_depth,
             extraction_schema=extraction_schema,
             extraction_prompt=extraction_prompt,
-            markdown_filter_prompt=markdown_filter_prompt
+            markdown_filter_prompt=markdown_filter_prompt,
+            ignore_images=ignore_images,
+            ignore_links=ignore_links,
+            is_llm_markdown=is_llm_markdown
         )
 
         # Step 3: Return the response

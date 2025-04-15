@@ -5,23 +5,23 @@ from math import inf as infinity
 from crawl4ai_custom.crawl4ai_config.mid_level.extraction_config import get_extraction_strategy
 from crawl4ai_custom.crawl4ai_config.mid_level.md_generator_config import get_pruning_md_generator, get_llm_md_generator
 
-def get_crawl_config(max_pages:int = infinity):
+def get_crawl_config(max_pages:int = infinity, max_depth:int = 1, ignore_images=True, ignore_links=True):
     return CrawlerRunConfig(
         verbose=True,
         stream=True,
         cache_mode=CacheMode.DISABLED,
-        markdown_generator=get_pruning_md_generator(),
+        markdown_generator=get_pruning_md_generator(ignore_images=ignore_images, ignore_links=ignore_links),
         deep_crawl_strategy=BFSDeepCrawlStrategy(
-            max_depth=1,
+            max_depth=max_depth,
             max_pages=max_pages,
         )
     )
 
-def get_html_file_crawl_config(filter_prompt:str = None):
+def get_html_file_crawl_config(filter_prompt:str = None, ignore_images=True, ignore_links=True):
     return CrawlerRunConfig(
         cache_mode=CacheMode.DISABLED,
         verbose=True,
         stream=True,
-        markdown_generator=get_llm_md_generator(filter_prompt),
+        markdown_generator=get_llm_md_generator(filter_prompt, ignore_images=ignore_images, ignore_links=ignore_links),
         # extraction_strategy=get_extraction_strategy()
     )

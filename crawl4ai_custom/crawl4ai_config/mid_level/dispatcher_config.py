@@ -17,7 +17,7 @@ def get_semaphore_dispatcher():
 
 def get_memory_adaptive_dispatcher():
     return MemoryAdaptiveDispatcher(
-        memory_threshold_percent=90.0,  # Pause if memory exceeds this
+        memory_threshold_percent=70.0,  # Pause if memory exceeds this
         check_interval=1.0,             # How often to check memory
         max_session_permit=10,          # Maximum concurrent tasks
         rate_limiter=RateLimiter(       # Optional rate limiting

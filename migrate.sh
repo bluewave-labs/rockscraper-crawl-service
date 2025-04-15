@@ -12,4 +12,4 @@ flask db migrate
 flask db upgrade
 
 echo "Starting Gunicorn..."
-gunicorn --workers 1 --timeout 120 -b 0.0.0.0:5000 --reload crawl:app
+gunicorn --workers 1 --timeout 600 -b 0.0.0.0:5000 --reload crawl:app -k gevent
