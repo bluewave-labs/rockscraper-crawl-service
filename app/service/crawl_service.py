@@ -83,6 +83,7 @@ class CrawlService:
             assert(len(markdown) == len(html))
             if extracted_content:
                 assert (len(markdown) == len(extracted_content))
+      
             
             # Create and save crawl records one by one
             saved_records = []

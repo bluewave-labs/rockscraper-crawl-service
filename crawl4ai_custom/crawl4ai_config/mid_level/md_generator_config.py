@@ -5,7 +5,7 @@ def get_llm_filter(filter_prompt:str = None):
     return LLMContentFilter(
         llm_config=get_llm_config(),
         instruction=filter_prompt,
-        chunk_token_threshold=500,  # Adjust based on your needs
+        chunk_token_threshold=1200,  # Adjust based on your needs
         verbose=True,
         extra_args={
             "temperature": 0.1,

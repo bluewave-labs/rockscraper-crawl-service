@@ -8,8 +8,8 @@ def get_extraction_strategy(schema: dict = None, prompt: str = None):
         schema=schema,
         extraction_type="schema",
         instruction=prompt,
-        chunk_token_threshold=800,
-        overlap_rate=0.2,
+        chunk_token_threshold=1200,
+        overlap_rate=0.1,
         apply_chunking=True,
         input_format="markdown",
         extra_args={

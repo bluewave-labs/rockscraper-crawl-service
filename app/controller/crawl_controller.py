@@ -13,9 +13,6 @@ def validate_crawl_data(data):
     if not isinstance(data.get('url'), str):
         return bad_request("URL must be a string")
 
-    if not isinstance(data.get('user_id'), int):
-        return bad_request("User ID must be an integer")
-
     if 'max_pages' in data and not isinstance(data.get('max_pages'), int):
         return bad_request("max_pages must be an integer")
 
@@ -41,14 +38,14 @@ def validate_crawl_data(data):
         return bad_request("markdown_filter_prompt must be a string")
 
     # Null checks
-    required_fields = ['url', 'user_id']
+    required_fields = ['url']
     for field in required_fields:
         if not data.get(field):
             return bad_request(f"{field.capitalize()} is required")
 
     return True
 
-def crawl_website_controller():
+def crawl_website_controller(user_id):
     """
     Controller to process website URL and crawl its content.
     """
@@ -59,7 +56,6 @@ def crawl_website_controller():
         return validation_response
 
     url = data['url']
-    user_id = data['user_id']
     max_pages = data.get('max_pages')
     max_depth = data.get('max_depth', 1)  # Default to 1 if not provided
     ignore_images = data.get('ignore_images', True)  # Default to True if not provided
