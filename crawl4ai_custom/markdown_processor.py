@@ -1,16 +1,12 @@
-import multiprocessing
-multiprocessing.set_start_method('spawn', True)
-
-from multiprocessing import Process, Queue, cpu_count
+from multiprocessing import Pool, cpu_count, get_context
 from .crawl4ai_config.mid_level.extraction_config import get_extraction_strategy
 
-def process_single_markdown(markdown_tuple, result_queue, schema: dict = None, prompt: str = None):
+def process_single_markdown(markdown_tuple, schema: dict = None, prompt: str = None):
     """
     Process a single markdown with LLM extraction.
     
     Args:
         markdown_tuple: Tuple of (name, content) to process
-        result_queue: Queue to store the results
         schema: Dictionary defining the schema for content extraction
         prompt: Text prompt for content extraction
     """
@@ -22,7 +18,7 @@ def process_single_markdown(markdown_tuple, result_queue, schema: dict = None, p
         sections=[md]
     )
     print(f"Extracted {len(extracted_content)} blocks from markdown {name}")
-    result_queue.put((name, extracted_content))
+    return extracted_content
 
 def process_markdowns(markdowns=None, schema: dict = None, prompt: str = None):
     """
@@ -39,30 +35,10 @@ def process_markdowns(markdowns=None, schema: dict = None, prompt: str = None):
     # Use 3 processes or the number of available CPU cores, whichever is smaller
     num_processes = min(3, cpu_count())
     print(f"Using {num_processes} processes for concurrent extraction")
-    
-    # Create a queue for results
-    result_queue = Queue()
-    processes = []
-    results = {}
 
-    # Start processes
-    for i in range(0, len(markdowns), num_processes):
-        batch = markdowns[i:i + num_processes]
-        for markdown_tuple in batch:
-            p = Process(target=process_single_markdown, args=(markdown_tuple, result_queue, schema, prompt))
-            processes.append(p)
-            p.start()
+    # Create a process pool with spawn context and map the processing function
+    with get_context("spawn").Pool(processes=num_processes) as pool:
+        contents = pool.map(lambda x: process_single_markdown(x, schema, prompt), markdowns)
 
-        # Wait for batch to complete
-        for p in processes:
-            p.join()
-
-        # Collect results
-        while not result_queue.empty():
-            name, content = result_queue.get()
-            results[name] = content
-
-    # Convert results to list in original order
-    contents = [results.get(name, None) for name, _ in markdowns]
     print(contents)
     return contents 
