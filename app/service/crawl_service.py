@@ -4,7 +4,11 @@ from datetime import datetime, timezone
 from app import db
 from app.helper.db.db_utils import save_to_db
 from app.models.crawl_model import Crawls
-from crawl4ai_custom.crawl import crawl, create_markdowns, process_markdowns
+from crawl4ai_custom.crawler import crawl
+from crawl4ai_custom.markdown_creator import create_markdowns
+from crawl4ai_custom.markdown_processor import process_markdowns
+from crawl4ai_custom.utils.file_utils import NON_LLM_MARKDOWN_DIR
+import os
 
 class CrawlService:
     async def _perform_crawl(self, url: str, max_pages=None, max_depth=1, extraction_schema=None, extraction_prompt=None, markdown_filter_prompt=None, ignore_images=True, ignore_links=True, is_llm_markdown=False):
@@ -23,25 +27,34 @@ class CrawlService:
             is_llm_markdown (bool, optional): Whether to skip LLM markdown processing. Defaults to False.
             
         Returns:
-            tuple: (markdown, html, extracted_content)
+            tuple: (markdown_content, html, extracted_content, urls)
         """
         # Run the crawl
         saved_files, urls = await crawl(url, max_pages=max_pages, max_depth=max_depth, ignore_images=ignore_images, ignore_links=ignore_links)
-        # Process the HTML files into markdowns
-        markdowns = saved_files if not is_llm_markdown else await create_markdowns(saved_files, filter_prompt=markdown_filter_prompt, ignore_images=ignore_images, ignore_links=ignore_links)
+        
+        # Get the actual markdown content
+        markdown_content = []
+        for filename in saved_files:
+            with open(os.path.join(NON_LLM_MARKDOWN_DIR, filename), 'r', encoding='utf-8') as f:
+                markdown_content.append(f.read())
+        
+        # Process the markdown content if needed
+        if is_llm_markdown:
+            markdown_content = await create_markdowns(saved_files, filter_prompt=markdown_filter_prompt, ignore_images=ignore_images, ignore_links=ignore_links)
+        
         # Process markdowns to extract content
         extracted_contents = None
         if extraction_schema or extraction_prompt:
+            # Create tuples of (filename_without_extension, content) for concurrent processing
+            markdown_tuples = [(os.path.splitext(filename)[0], content) for filename, content in zip(saved_files, markdown_content) if content is not None]
             extracted_contents = process_markdowns(
-                markdowns=markdowns,
+                markdowns=markdown_tuples,
                 schema=extraction_schema,
                 prompt=extraction_prompt
             )
         
-        # Return the actual markdown content for markdown field
-        # and the extracted content for extracted_content field
         return (
-            markdowns,
+            markdown_content,
             saved_files,
             extracted_contents,
             urls
@@ -68,7 +81,7 @@ class CrawlService:
         """
         try:
             # Run the async crawl
-            markdown, html, extracted_content, urls = asyncio.run(self._perform_crawl(
+            markdown_content, html, extracted_content, urls = asyncio.run(self._perform_crawl(
                 url,
                 max_pages=max_pages,
                 max_depth=max_depth,
@@ -80,19 +93,20 @@ class CrawlService:
                 is_llm_markdown=is_llm_markdown
             ))
 
-            assert(len(markdown) == len(html))
+            assert(len(markdown_content) == len(html))
             if extracted_content:
-                assert (len(markdown) == len(extracted_content))
+                assert (len(markdown_content) == len(extracted_content))
       
             
             # Create and save crawl records one by one
             saved_records = []
-            for i in range(len(markdown)):
+            for i in range(len(markdown_content)):
                 # Convert individual items to JSON strings for database storage
-                markdown_item = json.dumps(markdown[i]) if markdown and markdown[i] is not None else None
+                markdown_item = markdown_content[i] if markdown_content and markdown_content[i] is not None else None
                 html_item = html[i] if html else None
                 extracted_content_item = json.dumps(extracted_content[i]) if extracted_content and extracted_content[i] is not None else None
                 crawl_url = urls[i] if urls else None
+                
                 # Create the crawl record
                 crawl_record = Crawls(
                     user_id=user_id,
