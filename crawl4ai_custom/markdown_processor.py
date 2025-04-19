@@ -1,5 +1,7 @@
-from multiprocessing import Pool, cpu_count, get_context
+from multiprocessing.dummy import Pool
+from multiprocessing import cpu_count
 from .crawl4ai_config.mid_level.extraction_config import get_extraction_strategy
+from functools import partial
 
 def process_single_markdown(markdown_tuple, schema: dict = None, prompt: str = None):
     """
@@ -22,7 +24,7 @@ def process_single_markdown(markdown_tuple, schema: dict = None, prompt: str = N
 
 def process_markdowns(markdowns=None, schema: dict = None, prompt: str = None):
     """
-    Process markdowns with LLM extraction concurrently.
+    Process markdowns with LLM extraction concurrently using threads.
     
     Args:
         markdowns: List of markdown tuples (name, content) to process. If None, reads from markdowns folder.
@@ -32,13 +34,15 @@ def process_markdowns(markdowns=None, schema: dict = None, prompt: str = None):
     if not markdowns:
         return []
 
-    # Use 3 processes or the number of available CPU cores, whichever is smaller
-    num_processes = min(3, cpu_count())
-    print(f"Using {num_processes} processes for concurrent extraction")
+    # Use 3 threads or the number of available CPU cores, whichever is smaller
+    num_threads = min(3, cpu_count())
+    print(f"Using {num_threads} threads for concurrent extraction")
 
-    # Create a process pool with spawn context and map the processing function
-    with get_context("spawn").Pool(processes=num_processes) as pool:
-        contents = pool.map(lambda x: process_single_markdown(x, schema, prompt), markdowns)
+    # Create a thread pool and map the processing function
+    with Pool(processes=num_threads) as pool:
+        # partial lets us "preset" schema and prompt for each call
+        func = partial(process_single_markdown, schema=schema, prompt=prompt)
+        contents = pool.map(func, markdowns)
 
     print(contents)
-    return contents 
+    return contents
