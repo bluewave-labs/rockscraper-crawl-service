@@ -4,6 +4,10 @@ import time
 import re
 from urllib.parse import urlparse
 
+# Define base directories for storing files
+NON_LLM_MARKDOWN_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "non-llm-markdown")
+MARKDOWNS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "markdowns")
+FIT_HTML_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "fit_html")
 
 def ensure_directory_exists(directory: str) -> None:
     """Ensure that a directory exists, create it if it doesn't."""
@@ -60,7 +64,7 @@ def save_markdowns(markdowns: List[str], base_dir: str = "markdowns") -> List[st
     return saved_files
 
 
-def read_markdowns_from_folder(base_dir: str = "markdowns") -> List[str]:
+def read_markdowns_from_folder(base_dir: str = "markdowns") -> List[tuple]:
     """
     Read all markdown files from the specified directory.
     
@@ -68,7 +72,7 @@ def read_markdowns_from_folder(base_dir: str = "markdowns") -> List[str]:
         base_dir: Directory to read markdowns from
         
     Returns:
-        List of markdown strings
+        List of tuples containing (filename, markdown_content)
     """
     # Ensure the directory exists
     ensure_directory_exists(base_dir)
@@ -80,11 +84,13 @@ def read_markdowns_from_folder(base_dir: str = "markdowns") -> List[str]:
         file_path = os.path.join(base_dir, filename)
         with open(file_path, "r", encoding="utf-8") as f:
             markdown = f.read()
-            markdowns.append(markdown)
+            # Store as tuple (filename without .md extension, content)
+            markdowns.append((os.path.splitext(filename)[0], markdown))
             print(f"Read markdown from {file_path}")
     
-    return markdowns 
-    
+    return markdowns
+
+
 def generate_md_filename(url: str, timestamp: int = None, is_markdown=True) -> str:
     """Generate a unique filename for MD content based on URL and timestamp."""
     if timestamp is None:

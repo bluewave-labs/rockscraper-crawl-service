@@ -9,16 +9,16 @@ services:
     depends_on:
       - postgres
     ipc: host
-    security_opt:
-      - seccomp=./seccomp_profile.json
+    init: true
     deploy:
       resources:
         limits:
-          cpus: '4'
+          cpus: '5'
           memory: 8G
         reservations:
           cpus: '2'
-          memory: 4G
+    security_opt:
+      - seccomp=./seccomp_profile.json
   postgres:
     image: postgres:16.2-alpine
     volumes:
