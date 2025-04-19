@@ -1,7 +1,6 @@
 from multiprocessing.dummy import Pool
 from multiprocessing import cpu_count
 from .crawl4ai_config.mid_level.extraction_config import get_extraction_strategy
-from functools import partial
 
 def process_single_markdown(markdown_tuple, schema: dict = None, prompt: str = None):
     """
@@ -38,11 +37,8 @@ def process_markdowns(markdowns=None, schema: dict = None, prompt: str = None):
     num_threads = min(3, cpu_count())
     print(f"Using {num_threads} threads for concurrent extraction")
 
-    # Create a thread pool and map the processing function
     with Pool(processes=num_threads) as pool:
-        # partial lets us "preset" schema and prompt for each call
-        func = partial(process_single_markdown, schema=schema, prompt=prompt)
-        contents = pool.map(func, markdowns)
+        contents = pool.map(process_single_markdown, markdowns[:3])
 
     print(contents)
     return contents
